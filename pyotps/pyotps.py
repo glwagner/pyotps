@@ -262,31 +262,6 @@ def makesetup(controlfilepath, latlonfile, var, constitstr,
 
 
 
-def line_count_gen(reader):
-    """Yield a generator object for the purpose of counting lines in a file
-    at speed. See
-    https://stackoverflow.com/questions/
-        845058/how-to-get-line-count-cheaply-in-python/27518377#27518377
-    """
-    b = reader(1024*1024)
-    while b:
-        yield b
-        b = reader(1024*1024)
-
-
-
-def count_lines_fast(filepath):
-    """Count the lines in a file using the generator function 
-    _gen_line_counter."""
-
-    with open(filepath, 'rb') as countfile:
-        bufgen = line_count_gen(countfile.raw.read)
-        nlines = sum( buf.count(b'\n') for buf in bufgen )
-
-    return nlines
-
-
-
 def read_extract_output(outpath, modeltype='v1'):
     """"Parse the output of OTPS's extract_HC function and
         return the lats, lons, and constit data in a dict."""
