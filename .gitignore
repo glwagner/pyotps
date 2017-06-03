@@ -1,0 +1,2 @@
+# Ignore any directories that start with 'OTPS'
+OTPS*/
