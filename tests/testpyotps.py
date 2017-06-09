@@ -3,5 +3,5 @@ import pyotps
 
 otpspath = '/data5/glwagner/Numerics/patches/pyotps/OTPS2'
 
-driver = pyotps.tidaldriver(otpspath=otpspath, modeltype='v1')
+driver = pyotps.tidaldriver(otpspath=otpspath, otpstype='v1')
 driver.testdrive()

@@ -9,7 +9,7 @@ import numpy as np
 class tidaldriver(object):
     def __init__(self, 
             otpspath  = '../../OTPS2', 
-            modeltype= 'v1'
+            otpstype= 'v1'
             ):
         """Initialize the tidaldriver object and test the 
         interface with OTPS.
@@ -19,7 +19,7 @@ class tidaldriver(object):
                     version of OTPS which is correctly linked to 
                     downloaded data.
 
-                modeltype (str): Name of the model from which data is 
+                otpstype (str): Name of the model from which data is 
                     to be extracted. The two options available now are
                     'netcdf' (for the ncdf version of TPXO8-atlas-compact)
                     and 'v1' for the 'v1' version of TPXO8-atlas-compact 
@@ -31,19 +31,19 @@ class tidaldriver(object):
         """
 
         self.otpspath = otpspath
-        self.modeltype = modeltype
+        self.otpstype = otpstype
 
-        if modeltype is 'netcdf': 
+        if otpstype is 'netcdf': 
             self.controlfilename = 'Model_load'
             self.modellist = ['load_file.nc']
-        elif modeltype is 'v1':
+        elif otpstype is 'v1':
             self.controlfilename = 'Model_atlas_v1'
             self.modellist = [
                 'hf.tpxo8_atlas_30_v1', 
                 'uv.tpxo8_atlas_30_v1',
                 'grid_tpxo8atlas_30_v1']
         else:
-            raise ValueError("modeltype must be 'netcdf' or 'v1'.")
+            raise ValueError("otpstype must be 'netcdf' or 'v1'.")
 
         # Tests and file management
         self.datapath = "{}/DATA".format(self.otpspath)
@@ -192,7 +192,7 @@ class tidaldriver(object):
     
         # Read output, reshape, and return
         constits, lats, lons, amps, phases = read_extract_output(
-            outpath, modeltype=self.modeltype)
+            outpath, otpstype=self.otpstype)
 
         for c in amps.keys():
             amps[c] = np.reshape(amps[c], dims)
@@ -263,18 +263,18 @@ def makesetup(controlfilepath, latlonfile, var, constitstr,
 
 
 
-def read_extract_output(outpath, modeltype='v1'):
+def read_extract_output(outpath, otpstype='v1'):
     """"Parse the output of OTPS's extract_HC function and
         return the lats, lons, and constit data in a dict."""
 
-    if modeltype is 'v1':
+    if otpstype is 'v1':
         lineskip = 0
         headskip = 2
-    elif modeltype is 'netcdf':
+    elif otpstype is 'netcdf':
         lineskip = 0
         headskip = 3
     else:
-        raise ValueError("modeltype must be 'v1' or 'netcdf'.")
+        raise ValueError("otpstype must be 'v1' or 'netcdf'.")
 
     # Count lines in output file for preallocation purposes.
     nlines = sum(1 for line in open(outpath) if 'HC extracted' not in line)
