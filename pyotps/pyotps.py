@@ -124,8 +124,9 @@ class tidaldriver(object):
                 outname (str): Name of the the output text file.
 
             Returns:
-                A 4-tuple with numpy arrays of the input latitude, longitude, 
-                amplitude, and phase in the same shape as the input.
+                (lats, lons, amps, phases) with numpy arrays of the input latitude, 
+                longitude, amplitude, and phase in the same shape as the input.
+                
         """
 
         # Parameters
