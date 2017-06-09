@@ -1,13 +1,14 @@
 """This module interfaces with the shell-operated OSU Tidal Prediction Software (OTPS).
 """
 from __future__ import division
+
 import os, sys, shutil, subprocess
 import numpy as np
 
 
 class tidaldriver(object):
     def __init__(self, 
-            otpspath  = '../../OTPS', 
+            otpspath  = '../../OTPS2', 
             modeltype= 'v1'
             ):
         """Initialize the tidaldriver object and test the 
