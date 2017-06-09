@@ -1,0 +1,8 @@
+pyotps/__init__.py
+pyotps/pyotps.py
+pyotps.egg-info/PKG-INFO
+pyotps.egg-info/SOURCES.txt
+pyotps.egg-info/dependency_links.txt
+pyotps.egg-info/not-zip-safe
+pyotps.egg-info/requires.txt
+pyotps.egg-info/top_level.txt
