@@ -23,7 +23,10 @@ class tidaldriver(object):
                     to be extracted. The two options available now are
                     'netcdf' (for the ncdf version of TPXO8-atlas-compact)
                     and 'v1' for the 'v1' version of TPXO8-atlas-compact 
-                    available from http://volkov.oce.orst.edu/tides/tpxo8_atlas.html
+                    available from 
+
+                    http://volkov.oce.orst.edu/tides/tpxo8_atlas.html
+
                     as of June 2, 2017.
 
             Returns:
@@ -55,8 +58,9 @@ class tidaldriver(object):
                 "does not exist. Check that otpspath is correctly specified \n"
                 "and that the OTPS data has been downloaded.")
         elif not os.path.isfile(self.controlfilepath):
-            raise RuntimeError("The control file {} \n".format(self.controlfilepath) +
-                "does not exist.")
+            raise RuntimeError("The control file {} \n".format(
+                self.controlfilepath) + "does not exist.")
+                
                 
         # Copy control file and write new one
         shutil.copy2(self.controlfilepath, format(self.origcontrolfilepath))    
@@ -67,7 +71,6 @@ class tidaldriver(object):
 
         # TODO:
         #   1. Check that the result patches Joern's OBCs for the North Atlantic.
-
 
     def testdrive(self, withmsg=True):
         """Test drive the tidal driver."""
@@ -112,41 +115,55 @@ class tidaldriver(object):
 
             Args:
                 lats (array-like): Latitudes of points to extract amp and phase.
+
                 lons (array-like): Longitudes of points to extract amp and phase.
+
                 constituents: Tidal constituents to extract. Either a list of 
                     (lowercase) strings of tidal constituents, or the single
                     string 'all' to extract all available constituents.
+
                 var (str): Tidal variable to extract. Either 'z' (elevation), 
                     'U' (east/west transport), 'V' (north/south transport), 
                     'u' (east/west velocity), 'v' (north/south velocity).
+
                 ocegeo (str): String indicating whether to extract the 
                     'oceancentric' ('oce') or the 'geocentric' ('geo') variables.
+
                 outname (str): Name of the the output text file.
+                
+                outpath (str): Path to store the input setups and the output text
+                    files. If not specified it defaults to otpspath/pyotps_inout.
 
             Returns:
-                (constits, lats, lons, amps, phases) with numpy arrays of the 
-                input latitude, longitude, amplitude, and phase in the same 
-                shape as the input.
+                (constits, lats, lons, amps, phases), where constits is a list of
+                strings describing the constituents extracted, and the rest are 
+                numpy arrays of the input latitude, longitude, amplitude, and 
+                phase in the same shape as the input.
         """
 
         # Parameters
         execpath = "{}/extract_HC".format(self.otpspath)
         latlonname = 'latlonfile'
         setupname = 'pyotps_setup'
-        validconstits = ['m2', 's2', 'n2', 'k2', 'k1', 'o1', 'p1', 'q1', 'mf', 'mm']
+        validconstits = ['m2', 's2', 'n2', 'k2', 'k1', 'o1', 'p1', 'q1', 'mf', 
+            'mm']
         validvars = ['z', 'U', 'V', 'u', 'v']
         (lats, lons) = (np.array(lats), np.array(lons))
 
         # Check input
         if lats.shape != lons.shape:
-            raise ValueError("Input longitude and latitude are not the same shape!")
-        elif constituents is not 'all' and not set(constituents).issubset(validconstits):
-            raise ValueError("The parameter 'constituents' must either be 'all' or "
-                "a subset of [{}].".format(' '.join(validconstits)))
+            raise ValueError("Input longitude and latitude are not the same "   
+                "shape!")
+        elif constituents is not 'all' and not set(constituents).issubset(
+            validconstits):
+            raise ValueError("The parameter 'constituents' must either be 'all' "
+                "or a subset of [{}].".format(' '.join(validconstits)))
         elif var not in validvars:
-            raise ValueError("The parameter var must be one of {}.".format(' '.join(validvars)))
+            raise ValueError("The parameter var must be one of {}.".format(
+                ' '.join(validvars)))
         elif ocegeo not in ['oce', 'geo']:
-            raise ValueError("The parameter 'ocegeo' must either be 'oce' or 'geo'.")
+            raise ValueError("The parameter 'ocegeo' must either be 'oce' "
+                "or 'geo'.")
 
         # Save original dimensions and reshape input lats and lons into 1D list
         dims = lats.shape
@@ -171,7 +188,8 @@ class tidaldriver(object):
         # Generate a string with a list of the lats and lons to be extracted
         latlonlist = ''
         for i in range(len(lats)):
-            latlonlist = "{}{:16.6f} {:16.6f}\n".format(latlonlist, lats[i], lons[i])
+            latlonlist = "{}{:16.6f} {:16.6f}\n".format(
+                latlonlist, lats[i], lons[i])
 
         setup = makesetup(self.controlfilepath, latlonpath, var, constitstr,
             'AP', ocegeo, '1', outpath)
@@ -210,7 +228,8 @@ class tidaldriver(object):
         # Run the model
         with open(setuppath) as setupfile:
             data = subprocess.Popen([execpath], 
-                cwd=self.otpspath, stdout=subprocess.PIPE, stdin=setupfile).communicate()
+                cwd=self.otpspath, stdout=subprocess.PIPE, 
+                stdin=setupfile).communicate()
 
 
 
@@ -303,9 +322,22 @@ def read_extract_output(outpath, otpstype='v1'):
                 for i in range(0, len(header), 2):
                     constits.append(header[i][:2])
 
+                nconstits = len(constits)
+
             elif linenum > 3 and 'HC extracted' not in line:
-                # Extract data
-                linedata = np.array([float(i) for i in line.split()])
+
+                # Fill in data parsed from file. If values cannot be interpreted
+                # as floats, then fill with nans.
+                try:
+                    linedata = np.array([float(i) for i in line.split()])
+                except:
+                    linedata = np.zeros(2*nconstits+2, dtype=np.float64)
+
+                    linedata[0] = float(line.split()[0])
+                    linedata[1] = float(line.split()[1])
+
+                    linedata[2:].fill(np.nan)
+
 
                 lats[irec] = linedata[0]
                 lons[irec] = linedata[1]
