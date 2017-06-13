@@ -1,5 +1,5 @@
-import sys; sys.path.append('../pyotps')
-import pyotps
+#import sys; sys.path.append('../pyotps')
+import pyotps.pyotps
 
 otpspath = '/data5/glwagner/Numerics/patches/pyotps/OTPS2'
 
