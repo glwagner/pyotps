@@ -8,8 +8,8 @@ import numpy as np
 
 class tidaldriver(object):
     def __init__(self, 
-            otpspath  = '../../OTPS2', 
-            otpstype= 'v1'
+            otpspath = '../../OTPS2', 
+            otpstype = 'v1'
             ):
         """Initialize the tidaldriver object and test the 
         interface with OTPS.
@@ -108,7 +108,7 @@ class tidaldriver(object):
             print(msg)
 
 
-    def extract_amp_phase(self, lats, lons, constituents='all', 
+    def extract_amp_phase(self, lats, lons, constits='all', 
         var='z', ocegeo='oce', outname='pyotps_amp_ph', inoutpath=None):
         """Run the OTPS to extract tidal amplitudes and phase at specified
             list of latitudes and longitudes.
@@ -118,7 +118,7 @@ class tidaldriver(object):
 
                 lons (array-like): Longitudes of points to extract amp and phase.
 
-                constituents: Tidal constituents to extract. Either a list of 
+                constits: Tidal constituents to extract. Either a list of 
                     (lowercase) strings of tidal constituents, or the single
                     string 'all' to extract all available constituents.
 
@@ -154,9 +154,9 @@ class tidaldriver(object):
         if lats.shape != lons.shape:
             raise ValueError("Input longitude and latitude are not the same "   
                 "shape!")
-        elif constituents is not 'all' and not set(constituents).issubset(
+        elif constits is not 'all' and not set(constits).issubset(
             validconstits):
-            raise ValueError("The parameter 'constituents' must either be 'all' "
+            raise ValueError("The parameter 'constits' must either be 'all' "
                 "or a subset of [{}].".format(' '.join(validconstits)))
         elif var not in validvars:
             raise ValueError("The parameter var must be one of {}.".format(
@@ -181,8 +181,8 @@ class tidaldriver(object):
 
         # Generate the list of constituents to be read
         constitstr = ''
-        if constituents is not 'all':
-            for constit in constituents:
+        if constits is not 'all':
+            for constit in constits:
                 constitstr = constitstr + "{},".format(constit)
 
         # Generate a string with a list of the lats and lons to be extracted
