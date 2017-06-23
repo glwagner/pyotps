@@ -6,12 +6,12 @@ import os, sys, shutil, subprocess
 import numpy as np
 
 
-class tidaldriver(object):
+class TidalDriver(object):
     def __init__(self, 
             otpspath = '../../OTPS2', 
             otpstype = 'v1'
             ):
-        """Initialize the tidaldriver object and test the 
+        """Initialize the TidalDriver object and test the 
         interface with OTPS.
 
             Args:

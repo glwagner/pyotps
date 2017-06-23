@@ -1,1 +1,1 @@
-from .pyotps import tidaldriver
+from .pyotps import TidalDriver
